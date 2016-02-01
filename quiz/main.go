@@ -1,12 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"bufio"
+)
 
 func main() {
-	fmt.Printf("WELCOMEs!")
+	fmt.Printf("WELCOME!\n")
 	quiz := initQuiz()
 	printQuestions(quiz)
-	fmt.Printf("Results: %d%", quiz.Result())
+	fmt.Printf("Results: %d%\n", quiz.Result())
 }
 
 func initQuiz() Quiz {
@@ -17,9 +21,19 @@ func initQuiz() Quiz {
 }
 
 func printQuestions(quiz Quiz) {
-	for _,question := range quiz.Questions {
-		fmt.Printf("%s", question.Content)
+	var userAnswers = [2]string{}
+	reader := bufio.NewReader(os.Stdin)
+	for i,question := range quiz.Questions {
+		fmt.Printf("%s\n", question.Content)
+		for _,answer := range question.Answers {
+			fmt.Printf("%s: %s\n", answer.Id, answer.Content)
+		}
+
+		userAnswer, _ := reader.ReadString('\n')
+		userAnswers[i] = userAnswer
 	}
+
+	fmt.Printf("%v", userAnswers)
 }
 
 /**
@@ -27,21 +41,25 @@ func printQuestions(quiz Quiz) {
  */
 func generateFixtures() []Question {
 	q1 := Question{
-		Content: "Kamil's birth year",
+		Content: "Kamil's birth year?",
 		Answers: []Answer{
 			Answer{
+				Id: "A",
 				Content: "1992",
 				Correct: false,
 			},
 			Answer{
+				Id: "B",
 				Content: "1988",
 				Correct: true,
 			},
 			Answer{
+				Id: "C",
 				Content: "1995",
 				Correct: false,
 			},
 			Answer{
+				Id: "D",
 				Content: "1986",
 				Correct: false,
 			},
@@ -49,22 +67,26 @@ func generateFixtures() []Question {
 	}
 
 	q2 := Question{
-		Content: "Kamil's girlfriend name",
+		Content: "Kamil's eyes color?",
 		Answers: []Answer{
 			Answer{
-				Content: "Marta",
+				Id: "A",
+				Content: "Black",
 				Correct: false,
 			},
 			Answer{
-				Content: "Agnieszka",
+				Id: "B",
+				Content: "Green",
 				Correct: false,
 			},
 			Answer{
-				Content: "Anna",
+				Id: "C",
+				Content: "Blue",
 				Correct: true,
 			},
 			Answer{
-				Content: "Zofia",
+				Id: "D",
+				Content: "Grey",
 				Correct: false,
 			},
 		},

@@ -2,6 +2,7 @@ package main
 
 type Quiz struct {
 	Questions []Question
+	Answers []Answer
 }
 
 /**
