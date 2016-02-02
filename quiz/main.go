@@ -4,36 +4,48 @@ import (
 	"fmt"
 	"os"
 	"bufio"
+	"strings"
 )
 
 func main() {
 	fmt.Printf("WELCOME!\n")
 	quiz := initQuiz()
-	printQuestions(quiz)
+	runQuiz(quiz)
 	fmt.Printf("Results: %d%\n", quiz.Result())
 }
 
-func initQuiz() Quiz {
+func initQuiz() *Quiz {
 	questions := generateFixtures()
-	quiz := Quiz{questions}
+	quiz := &Quiz{
+		Questions: questions,
+	}
 
 	return quiz
 }
 
-func printQuestions(quiz Quiz) {
-	var userAnswers = [2]string{}
-	reader := bufio.NewReader(os.Stdin)
-	for i,question := range quiz.Questions {
-		fmt.Printf("%s\n", question.Content)
-		for _,answer := range question.Answers {
-			fmt.Printf("%s: %s\n", answer.Id, answer.Content)
-		}
+func runQuiz(quiz *Quiz) {
+	for _,question := range quiz.Questions {
+		quiz.Answers = append(quiz.Answers, runQuestion(question))
+	}
+}
 
-		userAnswer, _ := reader.ReadString('\n')
-		userAnswers[i] = userAnswer
+func runQuestion(question Question) Answer {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Printf("%s (Type an answer letter)\n", question.Content)
+
+	for _,answer := range question.Answers {
+		fmt.Printf("%s: %s\n", answer.Id, answer.Content)
 	}
 
-	fmt.Printf("%v", userAnswers)
+	answerId, _ := reader.ReadString('\n')
+	for !question.IsAnswerDefined(strings.TrimSpace(strings.ToUpper(answerId))) {
+		fmt.Printf("Incorrect answer! Try again:\n")
+		answerId, _ = reader.ReadString('\n')
+	}
+
+	userAnswer, _ := question.GetAnswerById(strings.TrimSpace(strings.ToUpper(answerId)))
+
+	return userAnswer
 }
 
 /**
@@ -41,52 +53,52 @@ func printQuestions(quiz Quiz) {
  */
 func generateFixtures() []Question {
 	q1 := Question{
-		Content: "Kamil's birth year?",
+		Content: "Number of Star Wars episodes?",
 		Answers: []Answer{
 			Answer{
 				Id: "A",
-				Content: "1992",
+				Content: "3",
 				Correct: false,
 			},
 			Answer{
 				Id: "B",
-				Content: "1988",
+				Content: "7",
 				Correct: true,
 			},
 			Answer{
 				Id: "C",
-				Content: "1995",
+				Content: "6",
 				Correct: false,
 			},
 			Answer{
 				Id: "D",
-				Content: "1986",
+				Content: "9",
 				Correct: false,
 			},
 		},
 	}
 
 	q2 := Question{
-		Content: "Kamil's eyes color?",
+		Content: "Real name of Darth Vader?",
 		Answers: []Answer{
 			Answer{
 				Id: "A",
-				Content: "Black",
+				Content: "Luke",
 				Correct: false,
 			},
 			Answer{
 				Id: "B",
-				Content: "Green",
+				Content: "Kylo",
 				Correct: false,
 			},
 			Answer{
 				Id: "C",
-				Content: "Blue",
+				Content: "Anakin",
 				Correct: true,
 			},
 			Answer{
 				Id: "D",
-				Content: "Grey",
+				Content: "Ben",
 				Correct: false,
 			},
 		},

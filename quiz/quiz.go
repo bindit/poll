@@ -9,5 +9,14 @@ type Quiz struct {
  * Calculate Quiz results
  */
 func (q Quiz) Result() int {
-	return 0;
+	totalAnswers := float64(len(q.Answers))
+	correctAnswers := float64(0)
+
+	for _, answer := range q.Answers {
+		if (answer.Correct) {
+			correctAnswers++
+		}
+	}
+
+	return int(correctAnswers / totalAnswers * 100);
 }
